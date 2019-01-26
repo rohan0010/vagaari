@@ -12,19 +12,18 @@ import {
     Keyboard,
     Platform
 } from "react-native";
-
+ import {BackHandler} from 'react-native'
 import { Icon } from 'native-base'
 const SCREEN_HEIGHT = Dimensions.get('window').height
 import * as Animatable from 'react-native-animatable'
 
 class LoginScreen extends Component {
-
-    static navigationOptions = {
-        header: null
-    }
-
-    constructor() {
-        super()
+       static navigationOptions = {
+    header: null
+  }
+    constructor(props) {
+        super(props)
+         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
 
         this.state = {
             placeholderText: 'Enter your mobile number'
@@ -33,21 +32,26 @@ class LoginScreen extends Component {
     componentWillMount() {
 
         this.loginHeight = new Animated.Value(150)
+         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
 
         this.keyboardWillShowListener = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow)
 
-        this.keyboardWillHideListener = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide)
+      
 
         this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this.keyboardWillShow)
 
-        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardWillHide)
+       
 
         this.keyboardHeight = new Animated.Value(0)
         this.forwardArrowOpacity = new Animated.Value(0)
         this.borderBottomWidth = new Animated.Value(0)
     }
+    componentWillUnMount() {
+  this.keyboardWillHideListener = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide)
+   this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardWillHide)
+    }
 
-    keyboardWillShow = (event) => {
+     keyboardWillShow = (event) => {
 
         if (Platform.OS == 'android') {
             duration = 100
@@ -75,8 +79,7 @@ class LoginScreen extends Component {
 
     }
 
-    keyboardWillHide = (event) => {
-
+    keyboardWillHide = (event) => {(this.keyboardWillShow)
         if (Platform.OS == 'android') {
             duration = 100
         }
@@ -102,7 +105,11 @@ class LoginScreen extends Component {
         ]).start()
     }
 
-
+   handleBackButtonClick(){
+            this.keyboardWillHide(100)
+            keyboard.dismiss()
+            return true
+        }
 
     increaseHeightOfLogin = () => {
 
@@ -119,6 +126,8 @@ class LoginScreen extends Component {
     decreaseHeightOfLogin = () => {
 
         Keyboard.dismiss()
+        this.keyboardWillHide(100)
+        this.setState({placeholderText:''})
         Animated.timing(this.loginHeight, {
             toValue: 150,
             duration: 500
@@ -186,8 +195,13 @@ class LoginScreen extends Component {
                         justifyContent: 'center',
                         borderRadius: 30
                     }}
-                >
+                >    
+                     <TouchableOpacity 
+                     onPress={() => this.props.navigation.navigate('CodeScreen')}
+                     >
                     <Icon name="md-arrow-forward" style={{ color: 'white' }} />
+                    </TouchableOpacity>
+            
                 </Animated.View>
 
                 <ImageBackground
@@ -265,7 +279,7 @@ class LoginScreen extends Component {
                                             paddingHorizontal: 10
 
                                         }}>+91</Text>
-
+                                        
                                         <TextInput
                                             keyboardType="numeric"
                                             ref="textInputMobile"
@@ -273,6 +287,7 @@ class LoginScreen extends Component {
                                             placeholder={this.state.placeholderText}
                                             underlineColorAndroid="transparent"
                                         />
+                            
                                     </Animated.View>
                                 </Animated.View>
                             </TouchableOpacity>

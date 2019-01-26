@@ -1,10 +1,14 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { TabNavigator } from 'react-navigation'
+import { StackNavigator } from 'react-navigation'
 import LoginScreen from './Screens/LoginScreen'
 import MapScreen from './Screens/MapScreen'
+import CodeScreen from './Screens/CodeScreen'
 
 export default class App extends React.Component {
+  static navigationOptions = {
+    header: null
+  }
   render() {
     return (
       <AppStackNavigator />
@@ -12,9 +16,10 @@ export default class App extends React.Component {
   }
 }
 
-const AppStackNavigator = TabNavigator({
-  LoginScreen: { screen: LoginScreen },
-  MapScreen: { screen: MapScreen}
+const AppStackNavigator = StackNavigator({
+ CodeScreen: { screen:CodeScreen },
+  MapScreen: { screen: MapScreen},
+  LoginScreen:{ screen: LoginScreen},
 })
 
 const styles = StyleSheet.create({
